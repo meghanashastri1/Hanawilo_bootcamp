@@ -34,7 +34,7 @@ const createCategory = async (req, res, next) => {
     
 }
 
-const deleteCategories = (req, res, next) => {
+const deleteCategories = async (req, res, next) => {
     try{
         const deletedCategories = await Category.deleteMany();
         res
@@ -47,7 +47,7 @@ const deleteCategories = (req, res, next) => {
 }
 
 //For '/category/:categoryId'
-const getCategory = (req, res, next) => {
+const getCategory = async (req, res, next) => {
     try {
         const category = await Category.findById(req.params.categoryId);
         res
@@ -60,7 +60,7 @@ const getCategory = (req, res, next) => {
     
 }
 
-const putCategory = (req, res, next) => {
+const putCategory = async (req, res, next) => {
     try {
         const category = await Category.findByIdAndUpdate(req.params.categoryId, req.body, {new: true});
         res
@@ -72,7 +72,7 @@ const putCategory = (req, res, next) => {
     }
 }
 
-const deleteCategory = (req, res, next) => {
+const deleteCategory = async (req, res, next) => {
     try {
         const deletedCategory = await Category.findByIdAndDelete(req.params.categoryId);
         res
