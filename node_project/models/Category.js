@@ -22,4 +22,13 @@ const CategorySchema = new Schema({
     timestamps: true
 })
 
+CategorySchema.pre('save', function(next) {
+    this.gender = this.gender.toUpperCase()
+    next()
+})
+
+CategorySchema.post('save', function(next) {
+    this.gender = this.gender.toLowerCase()
+
+})
 module.exports = mongoose.model('Category', CategorySchema);

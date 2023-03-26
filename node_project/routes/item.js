@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getItems, postItem, deleteItems, getItem, putItem, deleteItem } = require('../controllers/itemController');
+const { getItems, postItem, deleteItems, getItem, putItem, deleteItem, getItemRatings, postItemRating, deleteItemRatings } = require('../controllers/itemController');
 
 router.route('/')
     .get(getItems)
@@ -12,4 +12,8 @@ router.route('/:itemId')
     .put(putItem)
     .delete(deleteItem);
 
+router.route('/:itemId/ratings')
+    .get(getItemRatings)
+    .post(postItemRating)
+    .delete(deleteItemRatings);
 module.exports = router;

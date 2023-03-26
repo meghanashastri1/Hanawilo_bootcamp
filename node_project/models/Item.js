@@ -1,6 +1,23 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema; 
 
+const RatingSchema = new Schema({
+    rating: {
+        type: Number, 
+        min: 1,
+        max: 5,
+        required: true
+    },
+    text: {
+        type: String, 
+        required: true
+    },
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
+})
+
 const ItemSchema = new Schema({
     itemName: {
         type: String, 
@@ -43,9 +60,16 @@ const ItemSchema = new Schema({
     sizes: {
         type: [String], 
         required: true
-    }
+    }, 
+    ratings: [RatingSchema]
 }, {
     timestamps: true
+})
+
+ItemSchema.pre('save', function(next) {
+    this.gender = this.gender.toUpperCase()
+
+    next()
 })
 
 module.exports = mongoose.model('Item', ItemSchema);
