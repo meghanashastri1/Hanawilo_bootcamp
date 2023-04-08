@@ -7,6 +7,8 @@ const user = require('./routes/user');
 const logger = require('./middlewares/logger');
 const errorHandler = require('./middlewares/error');
 const connectDB = require('./config/dtb');
+const fileupload = require('express-fileupload');
+const cookieParser = require('cookie-parser');
 
 dotenv.config({ path: './config/config.env'});
 connectDB();
@@ -17,6 +19,8 @@ const app = express();
 app.use(bodyParser.json());
 
 //creating route and referencing router
+app.use(fileupload());
+app.use(cookieParser());
 app.use(logger);
 app.use(errorHandler);
 app.use('/category', category);
