@@ -4,29 +4,30 @@ const { getItems, postItem, deleteItems, getItem, putItem, deleteItem, getItemRa
     updateItemRating, 
     deleteItemRating, 
     postItemImage } = require('../controllers/itemController');
+const protectedRoute = require('../middlewares/auth');
 
 router.route('/')
     .get(getItems)
-    .post(postItem)
-    .delete(deleteItems);
+    .post(protectedRoute, postItem)
+    .delete(protectedRoute, deleteItems);
 
 router.route('/:itemId')
     .get(getItem)
-    .put(putItem)
-    .delete(deleteItem);
+    .put(protectedRoute, putItem)
+    .delete(protectedRoute, deleteItem);
 
 router.route('/:itemId/ratings')
     .get(getItemRatings)
-    .post(postItemRating)
-    .delete(deleteItemRatings);
+    .post(protectedRoute, postItemRating)
+    .delete(protectedRoute, deleteItemRatings);
 
 router.route('/:itemId/image')
     .post(postItemImage)
 
 router.route('/:itemId/ratings/:ratingId')
     .get(getItemRating)
-    .put(updateItemRating)
-    .delete(deleteItemRating)
+    .put(protectedRoute, updateItemRating)
+    .delete(protectedRoute, deleteItemRating)
 
 
 module.exports = router;
