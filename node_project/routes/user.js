@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUsers, postUser, deleteUsers, getUser, putUser, deleteUser, login } = require('../controllers/userController');
+const { getUsers, postUser, deleteUsers, getUser, putUser, deleteUser, login, forgotPassword, resetPassword, updatePassword, logout } = require('../controllers/userController');
 const adminValidator = require('../middlewares/utils/validators');
 const protectedRoute = require('../middlewares/auth');
 
@@ -8,6 +8,18 @@ const protectedRoute = require('../middlewares/auth');
 
 router.route('/login')
     .post(login)
+
+router.route('/forgotpassword')
+    .post(forgotPassword)
+
+router.route('/resetpassword')
+    .post(resetPassword)
+
+router.route('/updatepassword')
+    .post(updatePassword)
+
+router.route('/logout')
+    .post(logout)
 
 router.route('/')
     .get(protectedRoute, adminValidator, getUsers)

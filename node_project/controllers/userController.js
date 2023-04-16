@@ -1,5 +1,5 @@
 const User = require('../models/User');
-
+const crypto = require('crypto');
 // For /user endpoint
 
 const getUsers = async (req, res, next) => {
@@ -111,6 +111,76 @@ const login = async (req, res, next) => {
     sendTokenResponse(user, 200, res);
 }
 
+const forgotPassword = async (req, res, next) => {
+    const user = await User.findOne({ email: req.body.email})
+
+    if (!user) throw new Error('User does not exist');
+
+    const resetToken = user.getResetPasswordToken();
+
+    try{
+        await user.save({ validateBeforeSave: false});
+
+        res.status(200)
+        .setHeader('Content-Type', 'application/json')
+        .json({
+            msg: `Password has been reset with token: ${resetToken}`
+        })
+    } catch (err) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save({ validateBeforeSave: false})
+        throw new Error('Failed to reset password')
+    }
+}
+
+const resetPassword = async (re, res, next) => {
+    const resetPasswordToken = crypto.createHash('sha256').update(req.query.resetToken).digest('hex')
+
+    const user = await User.findOne({
+        resetPasswordToken, 
+        resetPasswordExpire: { $gt: Date.now()}
+    })
+
+    if (!user) throw new Error('Invalid token from user!')
+
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined; 
+    user.resetPasswordExpire = undefined; 
+
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
+}
+
+const updatePassword = async (req, res, next) => {
+    const user = await User.findById(req.user.id).select('+password');
+
+    const passwordMatches = await user.matchPassword(req.body.password);
+
+    if (!passwordMatches) throw new Error('Password is incorrect'); 
+
+    user.password = req.body.newPassword; 
+    await user.save(); 
+
+    sendTokenResponse(user, 200, res);
+}
+
+//For '/logout' endpoint 
+
+const logout = async (req, res, next) => {
+    res.cookie('token', 'none', {
+        expires: newDate(Date.now() + 10 * 1000),
+        httpOny: true
+    })
+
+    res
+    .status(200)
+    .setHeader('Content-Type', 'application')
+    .json({ msg: 'Successfully logged out'})
+}
+
 const sendTokenResponse = (user, statusCode, res) => {
     const token = user.getSignedJwtToken(); 
 
@@ -136,5 +206,9 @@ module.exports = {
     putUser,
     deleteUser,
     sendTokenResponse,
-    login
+    login, 
+    logout, 
+    updatePassword, 
+    resetPassword, 
+    forgotPassword
 };
